@@ -10,11 +10,11 @@ spec:
         app: vault-example
       annotations:
         vaultproject.io/policies: default
-        vaultproject.io/ttl: "24h"
+        vaultproject.io/ttl: "1h"
         pod.alpha.kubernetes.io/init-containers: '[
           {
             "name": "vault-init",
-            "image": "kelseyhightower/vault-init:0.0.1",
+            "image": "docker.io/kelseyhightower/vault-init:0.0.1",
             "imagePullPolicy": "Always",
             "env": [
               {
@@ -27,16 +27,16 @@ spec:
               },
               { 
                 "name": "VAULT_ADDR",
-                "value": "http://vault:8200"
+                "value": "http://vault.vault-controller.svc.cluster.local:8200"
               },
               { 
                 "name": "VAULT_CONTROLLER_ADDR",
-                "value": "http://vault-controller"
+                "value": "http://vault-controller.vault-controller.svc.cluster.local"
               }
             ],
             "volumeMounts": [
               {
-                "name": "vault-token",
+                "name": "vault-tokens",
                 "mountPath": "/var/run/secrets/vaultproject.io"
               }
             ]
@@ -45,14 +45,16 @@ spec:
     spec:
       containers:
         - name: vault-example
-          image: "kelseyhightower/vault-example:0.0.1"
+          image: "docker.io/kelseyhightower/vault-example:0.0.1"
           imagePullPolicy: Always
           env:
             - name: "VAULT_ADDR"
-              value: "http://vault:8200"
+              value: "http://vault.vault-controller.svc.cluster.local:8200"
           volumeMounts:
-            - name: vault-token
+            - name: vault-tokens
               mountPath: "/var/run/secrets/vaultproject.io"
+      serviceAccountName: vault-example
+#      serviceAccountName: vault
       volumes:
-        - name: vault-token
+        - name: vault-tokens
           emptyDir: {}
