@@ -10,7 +10,7 @@ spec:
         app: vault-example
       annotations:
         vaultproject.io/policies: default
-        vaultproject.io/ttl: "1h"
+        vaultproject.io/ttl: "24h"
         pod.alpha.kubernetes.io/init-containers: '[
           {
             "name": "vault-init",
